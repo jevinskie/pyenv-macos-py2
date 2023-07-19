@@ -1,0 +1,17 @@
+diff --git a/setup.py.2 b/setup.py
+index 10ac0e7..e1c2520 100644
+--- a/setup.py.2
++++ b/setup.py
+@@ -888,11 +888,9 @@ class PyBuildExt(build_ext):
+ 
+         # look for the openssl version header on the compiler search path.
+         opensslv_h = find_file('openssl/opensslv.h', [],
+-                inc_dirs + search_for_ssl_incs_in)
++                inc_dirs + search_for_ssl_incs_in, use_macosx_sdk=False)
+         if opensslv_h:
+             name = os.path.join(opensslv_h[0], 'openssl/opensslv.h')
+-            if host_platform == 'darwin' and is_macosx_sdk_path(name):
+-                name = os.path.join(macosx_sdk_root(), name[1:])
+             try:
+                 incfile = open(name, 'r')
+                 for line in incfile:

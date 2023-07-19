@@ -1,0 +1,58 @@
+diff --git a/setup.py.orig b/setup.py
+index f764223..10ac0e7 100644
+--- a/setup.py.orig
++++ b/setup.py
+@@ -109,7 +109,7 @@ def is_macosx_sdk_path(path):
+                 or path.startswith('/System/')
+                 or path.startswith('/Library/') )
+ 
+-def find_file(filename, std_dirs, paths):
++def find_file(filename, std_dirs, paths, use_macosx_sdk=True):
+     """Searches for the directory where a given file is located,
+     and returns a possibly-empty list of additional directories, or None
+     if the file couldn't be found at all.
+@@ -130,7 +130,7 @@ def find_file(filename, std_dirs, paths):
+     for dir in std_dirs:
+         f = os.path.join(dir, filename)
+ 
+-        if host_platform == 'darwin' and is_macosx_sdk_path(dir):
++        if use_macosx_sdk and host_platform == 'darwin' and is_macosx_sdk_path(dir):
+             f = os.path.join(sysroot, dir[1:], filename)
+ 
+         if os.path.exists(f): return []
+@@ -139,7 +139,7 @@ def find_file(filename, std_dirs, paths):
+     for dir in paths:
+         f = os.path.join(dir, filename)
+ 
+-        if host_platform == 'darwin' and is_macosx_sdk_path(dir):
++        if use_macosx_sdk and host_platform == 'darwin' and is_macosx_sdk_path(dir):
+             f = os.path.join(sysroot, dir[1:], filename)
+ 
+         if os.path.exists(f):
+@@ -148,7 +148,7 @@ def find_file(filename, std_dirs, paths):
+     # Not found anywhere
+     return None
+ 
+-def find_library_file(compiler, libname, std_dirs, paths):
++def find_library_file(compiler, libname, std_dirs, paths, use_macosx_sdk=True):
+     result = compiler.find_library_file(std_dirs + paths, libname)
+     if result is None:
+         return None
+@@ -162,7 +162,7 @@ def find_library_file(compiler, libname, std_dirs, paths):
+         # Ensure path doesn't end with path separator
+         p = p.rstrip(os.sep)
+ 
+-        if host_platform == 'darwin' and is_macosx_sdk_path(p):
++        if use_macosx_sdk and host_platform == 'darwin' and is_macosx_sdk_path(p):
+             # Note that, as of Xcode 7, Apple SDKs may contain textual stub
+             # libraries with .tbd extensions rather than the normal .dylib
+             # shared libraries installed in /.  The Apple compiler tool
+@@ -191,7 +191,7 @@ def find_library_file(compiler, libname, std_dirs, paths):
+         # Ensure path doesn't end with path separator
+         p = p.rstrip(os.sep)
+ 
+-        if host_platform == 'darwin' and is_macosx_sdk_path(p):
++        if use_macosx_sdk and host_platform == 'darwin' and is_macosx_sdk_path(p):
+             if os.path.join(sysroot, p[1:]) == dirname:
+                 return [ p ]
+ 

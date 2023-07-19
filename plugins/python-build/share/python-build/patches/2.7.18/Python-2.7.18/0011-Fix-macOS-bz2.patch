@@ -1,0 +1,24 @@
+diff --git a/setup.py.6 b/setup.py
+index 8283bc9..1fb2bcc 100644
+--- a/setup.py.6
++++ b/setup.py
+@@ -1492,12 +1492,18 @@ class PyBuildExt(build_ext):
+                                extra_link_args = extra_link_args) )
+ 
+         # Gustavo Niemeyer's bz2 module.
+-        if (self.compiler.find_library_file(lib_dirs, 'bz2')):
++        bz2_incs = find_file('bzlib.h', inc_dirs, [], use_macosx_sdk=False)
++        bz2_libs = find_library_file(self.compiler, 'bz2', lib_dirs, [], use_macosx_sdk=False)
++
++        if (bz2_incs is not None and
++            bz2_libs is not None):
+             if host_platform == "darwin":
+                 bz2_extra_link_args = ('-Wl,-search_paths_first',)
+             else:
+                 bz2_extra_link_args = ()
+             exts.append( Extension('bz2', ['bz2module.c'],
++                                   include_dirs = bz2_incs,
++                                   library_dirs = bz2_libs,
+                                    libraries = ['bz2'],
+                                    extra_link_args = bz2_extra_link_args) )
+         else:

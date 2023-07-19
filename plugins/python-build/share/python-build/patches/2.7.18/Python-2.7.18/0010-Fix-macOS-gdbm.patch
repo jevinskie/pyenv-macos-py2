@@ -1,0 +1,27 @@
+diff --git a/setup.py.5 b/setup.py
+index bbf451a..8283bc9 100644
+--- a/setup.py.5
++++ b/setup.py
+@@ -1271,15 +1271,13 @@ class PyBuildExt(build_ext):
+         # we do not build this one.  Otherwise this build will pick up
+         # the more recent berkeleydb's db.h file first in the include path
+         # when attempting to compile and it will fail.
+-        f = "/usr/include/db.h"
+-
+-        if host_platform == 'darwin':
+-            if is_macosx_sdk_path(f):
+-                sysroot = macosx_sdk_root()
+-                f = os.path.join(sysroot, f[1:])
+-
+-        if os.path.exists(f) and not db_incs:
+-            data = open(f).read()
++        db_inc_dirs = find_file('db.h', [], inc_dirs, use_macosx_sdk=False)
++        if db_inc_dirs is not None:
++            db_h = db_inc_dirs[0] + '/db.h'
++        else:
++            db_h = None
++        if db_h is not None and os.path.exists(db_h) and not db_incs:
++            data = open(db_h).read()
+             m = re.search(r"#s*define\s+HASHVERSION\s+2\s*", data)
+             if m is not None:
+                 # bingo - old version used hash file format version 2

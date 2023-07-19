@@ -804,7 +804,7 @@ build_package_standard_build() {
     use_tcltk || true
     use_homebrew_readline || use_freebsd_pkg || true
     if is_mac -ge 1014; then
-      use_xcode_sdk_zlib || use_homebrew_zlib || true
+      use_homebrew_zlib || true
     else
       use_homebrew_zlib || true
     fi
@@ -1600,7 +1600,18 @@ use_homebrew_zlib() {
   local brew_zlib="$(brew --prefix zlib 2>/dev/null || true)"
   if [ -d "$brew_zlib" ]; then
     echo "python-build: use zlib from homebrew"
-    export CFLAGS="-I${brew_zlib} ${CFLAGS}"
+    export CFLAGS="-I${brew_zlib}/include ${CFLAGS}"
+    export LDFLAGS="-L${brew_zlib}/lib ${LDFLAGS}"
+  fi
+}
+
+use_homebrew_bzip2() {
+  can_use_homebrew || return 1
+  local brew_bzip2="$(brew --prefix bzip2 2>/dev/null || true)"
+  if [ -d "$brew_bzip2" ]; then
+    echo "python-build: use bzip2 from homebrew"
+    export CFLAGS="-I${brew_bzip2}/include ${CFLAGS}"
+    export LDFLAGS="-L${brew_bzip2}/lib ${LDFLAGS}"
   fi
 }
 
